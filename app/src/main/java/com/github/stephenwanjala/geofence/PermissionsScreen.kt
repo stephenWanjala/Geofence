@@ -5,6 +5,7 @@ package com.github.stephenwanjala.geofence
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.LocationManager
 import android.os.Build
 import android.provider.Settings
@@ -22,17 +23,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -41,18 +38,21 @@ import com.ramcosta.composedestinations.annotation.Destination
 @OptIn(ExperimentalPermissionsApi::class)
 @Destination(start = true)
 @Composable
-fun PermissionsScreen() {
+fun PermissionsScreen(
+    viewModel: GeofenceViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
-    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    val isLocationEnabled by rememberSaveable {
-        mutableStateOf(
-            (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-                    || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-        )
+    val locationEnabledState = viewModel.locationEnabled.collectAsState()
+
+    val receiver = LocationProviderChangedReceiver(viewModel)
+
+    DisposableEffect(Unit) {
+        val filter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+        context.registerReceiver(receiver, filter)
+        onDispose {
+            context.unregisterReceiver(receiver)
+        }
     }
-
-
-
 
     val locationPermissionsState = rememberMultiplePermissionsState(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) listOf(
@@ -69,7 +69,7 @@ fun PermissionsScreen() {
         onGrantPermissionClick = {
             locationPermissionsState.launchMultiplePermissionRequest()
         }) {
-        if (isLocationEnabled) {
+        if (locationEnabledState.value.isLocationEnabled) {
             Text(text = "Location Turned on")
         } else {
             Button(onClick = { openLocationSettings(context) }) {
@@ -142,6 +142,7 @@ fun LocationPermissionScreen(
                             modifier = Modifier.padding(8.dp),
                             text = textToShow,
                             textAlign = TextAlign.Center
+
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -153,3 +154,6 @@ fun LocationPermissionScreen(
         }
     }
 }
+
+
+
