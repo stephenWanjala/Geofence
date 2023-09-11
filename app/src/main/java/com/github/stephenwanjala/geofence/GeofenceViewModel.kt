@@ -1,5 +1,6 @@
 package com.github.stephenwanjala.geofence
 
+import android.location.LocationManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,9 +14,10 @@ class GeofenceViewModel @Inject constructor() : ViewModel() {
     private val locationEnabledState = MutableStateFlow(LocationEnabledState())
     val locationEnabled = locationEnabledState.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(5000),
+        SharingStarted.WhileSubscribed(500),
         LocationEnabledState()
     )
+
 
 
     fun onEvent(event: GeofenceEvent) {

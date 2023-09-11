@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,12 +48,21 @@ fun PermissionsScreen(
     val receiver = LocationProviderChangedReceiver(viewModel)
 
     DisposableEffect(Unit) {
-        val filter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
-        context.registerReceiver(receiver, filter)
+//        val filter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+        val locationFilter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+        val modeFilter = IntentFilter(LocationManager.MODE_CHANGED_ACTION)
+        context.registerReceiver(receiver, locationFilter)
+        context.registerReceiver(receiver, modeFilter)
         onDispose {
             context.unregisterReceiver(receiver)
         }
     }
+    val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    val isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    LaunchedEffect(isLocationEnabled) {
+        viewModel.onEvent(if (isLocationEnabled) GeofenceEvent.LocationEnabled else GeofenceEvent.LocationDisabled)
+    }
+
 
     val locationPermissionsState = rememberMultiplePermissionsState(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) listOf(
