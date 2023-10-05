@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalPermissionsApi::class)
+@file:OptIn(ExperimentalPermissionsApi::class, ExperimentalPermissionsApi::class)
 
 package com.github.stephenwanjala.geofence
 
@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.location.LocationManager
-import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +19,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -34,21 +35,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.ramcosta.composedestinations.annotation.Destination
 
-@OptIn(ExperimentalPermissionsApi::class)
-@Destination(start = true)
 @Composable
-fun PermissionsScreen(
+fun LocationPermissionWrapper(
+    content: @Composable () -> Unit,
     viewModel: GeofenceViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val locationEnabledState = viewModel.locationEnabled.collectAsState()
 
     val receiver = LocationProviderChangedReceiver(viewModel)
-
     DisposableEffect(Unit) {
-//        val filter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
+
         val locationFilter = IntentFilter(LocationManager.PROVIDERS_CHANGED_ACTION)
         val modeFilter = IntentFilter(LocationManager.MODE_CHANGED_ACTION)
         context.registerReceiver(receiver, locationFilter)
@@ -57,40 +55,38 @@ fun PermissionsScreen(
             context.unregisterReceiver(receiver)
         }
     }
+
     val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     val isLocationEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     LaunchedEffect(isLocationEnabled) {
         viewModel.onEvent(if (isLocationEnabled) GeofenceEvent.LocationEnabled else GeofenceEvent.LocationDisabled)
     }
 
-
     val locationPermissionsState = rememberMultiplePermissionsState(
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) listOf(
+        listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-        ) else listOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
         )
     )
-    LocationPermissionScreen(
-        locationPermissionsState = locationPermissionsState,
-        onGrantPermissionClick = {
-            locationPermissionsState.launchMultiplePermissionRequest()
-        }) {
-        if (locationEnabledState.value.isLocationEnabled) {
-            Text(text = "Location Turned on")
-        } else {
-            Button(onClick = { openLocationSettings(context) }) {
-                Text(text = "Turn on Location")
+
+    Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        LocationPermissionScreen(
+            locationPermissionsState = locationPermissionsState,
+            onGrantPermissionClick = {
+                locationPermissionsState.launchMultiplePermissionRequest()
+            }) {
+            if (locationEnabledState.value.isLocationEnabled) content() else Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Button(onClick = { openLocationSettings(context) }) {
+                    Text(text = "Enable Location Services in Settings")
+                }
             }
         }
-
     }
-
 }
-
 
 fun openLocationSettings(context: Context) {
     val locationSettingsIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
@@ -98,9 +94,8 @@ fun openLocationSettings(context: Context) {
 }
 
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun LocationPermissionScreen(
+internal fun LocationPermissionScreen(
     locationPermissionsState: MultiplePermissionsState,
     onGrantPermissionClick: () -> Unit,
     onPermissionsGranted: @Composable ColumnScope.() -> Unit
@@ -165,6 +160,7 @@ fun LocationPermissionScreen(
         }
     }
 }
+
 
 
 
