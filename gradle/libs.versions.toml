@@ -1,5 +1,13 @@
 [versions]
-agp = "8.3.0-alpha03"
+accompanist-permissions = "0.33.1-alpha"
+agp = "8.3.0-alpha06"
+androidx-hilt-hiltCompiler = "1.0.0"
+androidx-hiltNavigationCompose = "1.0.0"
+coroutinesVersion = "1.7.1"
+google-hiltAndroid = "2.48"
+destinationsVersion = "1.9.51"
+google-hiltCompiler = "2.48"
+hiltAndroidGradlePlugin = "2.48"
 kotlin = "1.9.10"
 core-ktx = "1.12.0"
 junit = "4.13.2"
@@ -7,16 +15,32 @@ androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 lifecycle-runtime-ktx = "2.6.2"
 activity-compose = "1.7.2"
-compose-bom = "2023.09.00"
+compose-bom = "2023.09.02"
+lifecycleVersion = "2.6.2"
+navVersion = "2.7.3"
+play-services-location = "21.0.1"
 
 [libraries]
+androidx-hilt-hilt-compiler3 = { module = "androidx.hilt:hilt-compiler", version.ref = "androidx-hilt-hiltCompiler" }
+androidx-hilt-hilt-navigation-compose2 = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hiltNavigationCompose" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleVersion" }
+androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleVersion" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navVersion" }
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist-permissions" }
+com-google-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "google-hiltAndroid" }
+com-google-dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "google-hiltCompiler" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+dagger-hilt-android-gradle-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hiltAndroidGradlePlugin" }
+io-github-raamcosta-compose-destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "destinationsVersion" }
+io-github-raamcosta-compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "destinationsVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "play-services-location" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }

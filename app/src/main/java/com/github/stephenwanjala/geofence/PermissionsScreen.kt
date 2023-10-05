@@ -98,6 +98,7 @@ fun openLocationSettings(context: Context) {
 }
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationPermissionScreen(
     locationPermissionsState: MultiplePermissionsState,

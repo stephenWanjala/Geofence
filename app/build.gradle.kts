@@ -71,35 +71,28 @@ dependencies {
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
 
-    implementation("com.google.android.gms:play-services-location:21.0.1")
-    implementation("com.google.accompanist:accompanist-permissions:0.33.1-alpha")
-
-
-    val lifecycleVersion = "2.6.1"
-    val navVersion = "2.7.1"
-    val coroutinesVersion ="1.7.1"
-    val destinationsVersion ="1.9.51"
-
+    implementation(libs.play.services.location)
+    implementation(libs.accompanist.permissions)
     //    coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+    implementation(libs.kotlinx.coroutines.android)
 
 //    navigation
-    implementation("androidx.navigation:navigation-compose:$navVersion")
+    implementation(libs.androidx.navigation.compose)
 
 // ViewModel
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
+    implementation (libs.androidx.lifecycle.viewmodel.ktx)
 // ViewModel utilities for Compose
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
+    implementation (libs.androidx.lifecycle.viewmodel.compose)
 
 
 
     //destinations lib
-    implementation("io.github.raamcosta.compose-destinations:core:$destinationsVersion")
-    ksp("io.github.raamcosta.compose-destinations:ksp:$destinationsVersion")
+    implementation(libs.io.github.raamcosta.compose.destinations.core)
+    ksp(libs.io.github.raamcosta.compose.destinations.ksp)
 
-    ksp("com.google.dagger:hilt-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-    implementation("com.google.dagger:hilt-android:2.48")
-    ksp ("androidx.hilt:hilt-compiler:1.0.0")
+    ksp(libs.com.google.dagger.hilt.compiler)
+    implementation(libs.androidx.hilt.hilt.navigation.compose2)
+    implementation(libs.com.google.dagger.hilt.android)
+    ksp (libs.androidx.hilt.hilt.compiler3)
 
 }
